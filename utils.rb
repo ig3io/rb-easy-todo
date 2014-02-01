@@ -19,3 +19,10 @@ def verify_password(list_id, raw_password)
 	todo = TodoList.get_by_id(list_id)
 	return get_hash(raw_password) == todo.password
 end
+
+def todo_action(params)
+	list_id = params[:list_id]
+	item_id = params[:item_id]
+	todo = TodoList.get_by_id(list_id)
+	yield todo, item_id
+end

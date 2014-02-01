@@ -60,11 +60,11 @@ post '/setpassword/:list_id' do
 end
 
 post '/add/:list_id' do
-	list_id = params[:list_id]
 	item = params[:todo]
-	todo = TodoList.get_by_id(list_id)
-	todo.add_item(item)
-	redirect "/#{list_id}"
+	todo_action params do |todo|
+		todo.add_item(item)
+	end
+	redirect "/#{params[:list_id]}"
 end
 
 get '/remove/:list_id/:item_id' do
@@ -80,15 +80,13 @@ get '/remove/:list_id/:item_id' do
 end
 
 post '/mark/:list_id/:item_id' do
-	list_id = params[:list_id]
-	item_id = params[:item_id]
-	todo = TodoList.get_by_id(list_id)
-	todo.mark(item_id)
+	todo_action params do |todo, item_id|
+		todo.mark(item_id)
+	end
 end
 
 post '/unmark/:list_id/:item_id' do
-	list_id = params[:list_id]
-	item_id = params[:item_id]
-	todo = TodoList.get_by_id(list_id)
-	todo.unmark(item_id)
+	todo_action params do |todo, item_id|
+		todo.unmark(item_id)
+	end
 end
