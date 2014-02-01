@@ -1,0 +1,65 @@
+%html
+  %head
+    %meta{:charset=>"utf-8"}
+    %title Easy-TODO
+    %link{:rel=>'stylesheet', :type=>'text/css', :href=>'/css/bootstrap.css'}
+    %link{:rel=>'stylesheet', :type=>'text/css', :href=>'/css/todo.css'}
+    %script{:src=>'/js/jquery.js'}
+    %script{:src=>'/js/todo.js'}
+  %body
+    .container
+      .panel.panel-default
+        .panel-heading
+          %h3.panel-title
+            %a{:href=>'/'}= "TODO"
+            = "(#{@id}): #{@title}"
+        - if @logged
+          .panel-body
+            %table.table.table-hover
+              %tr
+                %th #
+                %th Done
+                %th Todo
+                %th Remove
+              - @items.each_with_index do |item, index|
+                %tr.clickable{:class=>item[:done]?"done":"", :onclick=>"toggle(event, $(this));", :data=> {:list_id=>@id, :item_id=>item[:id]}}
+                  %a{:href=>"/mark/#{@id}/#{item[:id]}"}
+                  %td= index + 1
+                  %td
+                    %span.glyphicon{:class=>item[:done] ? "glyphicon-ok" : "glyphicon-remove"}
+                  %td= item[:todo]
+                  %td
+                    %a.btn.btn-danger{ :href=>"/remove/#{@id}/#{item[:id]}", :onclick=>"a_handler(event);" } Remove
+            %tr
+              %td
+              %td
+              %td
+              %td
+                %a.btn.btn-danger{:href=>"/remove/#{@id}/marked"} Remove marked
+          .panel-body
+            %form{:action=>"/add/#{@id}", :method=>"POST"}
+              .form-group
+                .col-md-10
+                  %input.form-control{:type=>"text", :name=>"todo", :placeholder=>"Item"}
+                %input.btn.btn-primary{:type=>"submit"}
+          - if not @has_title or not @has_password
+            .panel-body
+              - if not @has_title
+                %form{:action=>"/settitle/#{@id}", :method=>"POST"}
+                  .form-group
+                    .col-md-5
+                      %input.form-control{:type=>"text", :name=>"title", :placeholder=>"Title"}
+                    %input.btn.btn-success{:type=>"submit"}
+              - if not @has_password
+                %form{:action=>"/setpassword/#{@id}", :method=>"POST"}
+                  .form-group
+                    .col-md-5
+                      %input.form-control{:type=>"text", :name=>"password", :placeholder=>"Password"}
+                    %input.btn.btn-success{:type=>"submit"}
+        - else
+          .panel-body
+            %form{:action=>"/login/#{@id}", :method=>"POST"}
+              .form-group
+                .col-md-5
+                  %input.form-control{:type=>"text", :name=>"password", :placeholder=>"Password"}
+                %input.btn.btn-success{:type=>"submit"}
